@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model alumnos {
+  id         Int          @id @default(autoincrement())
+  nombre     String       @db.VarChar(255)
+  correo     String       @unique @db.VarChar(255)
+  password   String       @db.VarChar(255)
+  numero     String       @db.VarChar(9)
+  dni        String       @unique @db.VarChar(8)
+  amaterno   String       @db.VarChar(35)
+  apaterno   String       @db.VarChar(35)
+  matriculas matriculas[]
+}
+
+model cursos {
+  id          Int          @id @default(autoincrement())
+  idDocente   Int
+  nombre      String       @db.VarChar(60)
+  descripcion String       @db.Text
+  docente     docente      @relation(fields: [idDocente], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cursos_ibfk_1")
+  matriculas  matriculas[]
+  temas       temas[]
+}
+
+model matriculas {
+  id       Int     @id @default(autoincrement())
+  idAlumno Int
+  idCurso  Int
+  estado   String? @default("Matriculado") @db.VarChar(20)
+  alumnos  alumnos @relation(fields: [idAlumno], references: [id], onDelete: Cascade)
+  cursos   cursos  @relation(fields: [idCurso], references: [id], onDelete: Cascade)
+}
+
+model docente {
+  id       Int      @id @default(autoincrement())
+  nombre   String   @db.VarChar(35)
+  correo   String   @unique @db.VarChar(40)
+  password String   @db.VarChar(255)
+  numero   String   @db.VarChar(9)
+  dni      String   @unique @db.VarChar(8)
+  amaterno String   @db.VarChar(35)
+  apaterno String   @db.VarChar(35)
+  cursos   cursos[]
+}
+
+model juegos {
+  id          Int     @id @default(autoincrement())
+  idTema      Int     @default(autoincrement())
+  nombreJuego String? @db.VarChar(255)
+  temas       temas   @relation(fields: [idTema], references: [id], onDelete: Cascade)
+  idJuego     Int
+}
+
+model res_cambialo {
+  id         Int      @id @default(autoincrement())
+  respuesta  String?  @db.VarChar(255)
+  idAlumno   Int?
+  nombre     String?  @db.VarChar(25)
+  apaterno   String?  @db.VarChar(25)
+  idCambialo Int
+  cambialo   cambialo @relation(fields: [idCambialo], references: [id], onDelete: Cascade)
+}
+
+model cambialo {
+  id           Int            @id @default(autoincrement())
+  enunciado    String?        @db.VarChar(255)
+  emocion      String?        @db.VarChar(255)
+  res_cambialo res_cambialo[]
+}
+
+model res_interactivas {
+  id            Int            @id @default(autoincrement())
+  respuesta     String?        @db.VarChar(255)
+  pregunta      String?        @db.VarChar(255) 
+  idInteractiva Int
+  idAlumno      Int?
+  nombre        String?        @db.VarChar(25)
+  apaterno      String?        @db.VarChar(25)
+  pInteractiva  p_interactivas @relation(fields: [idInteractiva], references: [id], onDelete: Cascade)
+}
+
+model p_interactivas {
+  id              Int                @id @default(autoincrement())
+  parrafo         String?            @db.VarChar(255)
+  pregunta        String?            @db.VarChar(255)
+  claveA          String?            @db.Text
+  claveB          String?            @db.Text
+  claveC          String?            @db.Text
+  resInteractivas res_interactivas[]
+}
+
+model haremos {
+  id          Int           @id @default(autoincrement())
+  pregunta    String?       @db.VarChar(255)
+  res_haremos res_haremos[]
+}
+
+model res_haremos {
+  id        Int     @id @default(autoincrement())
+  pregunta  String? @db.VarChar(255)
+  respuesta String? @db.VarChar(255)
+  idHaremos Int
+  idAlumno  Int?
+  nombre    String? @db.VarChar(25)
+  apaterno  String? @db.VarChar(25)
+  haremos   haremos @relation(fields: [idHaremos], references: [id], onDelete: Cascade)
+}
+
+model preguntas_dado {
+  id             Int              @id @default(autoincrement())
+  primera_pre    String           @db.VarChar(255)
+  segunda_pre    String           @db.VarChar(255)
+  tercera_pre    String           @db.VarChar(255)
+  cuarta_pre     String           @db.VarChar(255)
+  quinta_pre     String           @db.VarChar(255)
+  sexta_pre      String           @db.VarChar(255)
+  respuesta_dado respuesta_dado[]
+}
+
+model respuesta_dado {
+  id        Int            @id @default(autoincrement())
+  respuesta String         @db.VarChar(255)
+  pregunta  String         @db.VarChar(255)
+  idAlumno  Int?
+  nombre    String?        @db.VarChar(25)
+  apaterno  String?        @db.VarChar(25)
+  idDado    Int
+  dado      preguntas_dado @relation(fields: [idDado], references: [id], onDelete: Cascade)
+}
+
+model dale_significado {
+  id              Int               @id @default(autoincrement())
+  lectura         String?           @db.VarChar(255)
+  res_significado res_significado[]
+}
+
+model res_significado {
+  id           Int              @id @default(autoincrement())
+  palabra1     String?          @db.VarChar(255)
+  palabra2     String?          @db.VarChar(255)
+  palabra3     String?          @db.VarChar(255)
+  significado1 String?          @db.VarChar(255)
+  significado2 String?          @db.VarChar(255)
+  significado3 String?          @db.VarChar(255)
+  idAlumno     Int?
+  nombre       String?          @db.VarChar(25)
+  apaterno     String?          @db.VarChar(25)
+  idDale       Int
+  dale         dale_significado @relation(fields: [idDale], references: [id], onDelete: Cascade)
+}
+
+model ruleta {
+  id         Int          @id @default(autoincrement())
+  pregunta1  String?      @db.VarChar(255)
+  pregunta2  String?      @db.VarChar(255)
+  pregunta3  String?      @db.VarChar(255)
+  pregunta4  String?      @db.VarChar(255)
+  pregunta5  String?      @db.VarChar(255)
+  res_ruleta res_ruleta[]
+}
+
+model res_ruleta {
+  id        Int     @id @default(autoincrement())
+  pregunta  String? @db.VarChar(255)
+  respuesta String? @db.VarChar(255)
+  idAlumno  Int?
+  nombre    String? @db.VarChar(25)
+  apaterno  String? @db.VarChar(25)
+  idRuleta  Int
+  ruleta    ruleta  @relation(fields: [idRuleta], references: [id], onDelete: Cascade)
+}
+
+model ordenalo {
+  id           Int            @id @default(autoincrement())
+  parrafo1     String?        @db.VarChar(255)
+  parrafo2     String?        @db.VarChar(255)
+  parrafo3     String?        @db.VarChar(255)
+  parrafo4     String?        @db.VarChar(255)
+  parrafo5     String?        @db.VarChar(255)
+  res_ordenalo res_ordenalo[]
+}
+
+model res_ordenalo {
+  id         Int      @id @default(autoincrement())
+  orden1     String?  @db.VarChar(255)
+  orden2     String?  @db.VarChar(255)
+  orden3     String?  @db.VarChar(255)
+  orden4     String?  @db.VarChar(255)
+  orden5     String?  @db.VarChar(255)
+  idAlumno   Int?
+  nombre     String?  @db.VarChar(25)
+  apaterno   String?  @db.VarChar(25)
+  idOrdenalo Int
+  ordenalo   ordenalo @relation(fields: [idOrdenalo], references: [id], onDelete: Cascade)
+}
+
+model temas {
+  id          Int      @id @default(autoincrement())
+  idCurso     Int
+  descripcion String   @db.Text
+  nombre      String   @db.VarChar(255)
+  lectura     String   @db.Text
+  cursos      cursos?  @relation(fields: [idCurso], references: [id])
+  juegos      juegos[]
+}
