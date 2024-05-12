@@ -44,7 +44,7 @@ router.post("/agregarRuleta", async (req, res) => {
         await prisma.juegos.create({
           data: {
             idTema: Number(idTema),
-            nombreJuego: "El dado de las preguntas",
+            nombreJuego: "Ruleteando",
             idJuego: ruleta.id,
           },
         });
@@ -95,7 +95,7 @@ router.post("/respuestaRuleta", async (req, res) => {
         if (rj.nombreJuego === "Ruleteando") {
           await prisma.res_ruleta.create({
             data: {
-              idDado: Number(rj.idJuego),
+              idRuleta: Number(rj.idJuego),
               pregunta: pregunta,
               respuesta: respuesta,
               idAlumno: Number(idAlumno),
