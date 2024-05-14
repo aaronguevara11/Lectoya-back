@@ -72,6 +72,7 @@ router.get("/cursosAlumno", async (req, res) => {
               select: {
                 cursos: {
                   select: {
+                    id: true,
                     nombre: true,
                     docente: {
                       select: {
