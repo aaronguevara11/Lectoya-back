@@ -258,7 +258,7 @@ router.delete("/eliminarCurso", async (req, res) => {
       } else {
         const { id } = req.body;
 
-        const existeCurso = await prisma.cursos.count({
+        const existeCurso = await prisma.cursos.findFirst({
           where: {
             id: Number(id),
           },
