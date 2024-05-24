@@ -3,9 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
 const router = Router();
-const prisma = new PrismaClient({
-  log: ["query"],
-});
+const prisma = new PrismaClient();
 
 router.post("/matricularAlumno", async (req, res) => {
   try {
@@ -103,6 +101,63 @@ router.get("/genLink/:idCurso", async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
+      message: "Error en el servidor",
+    });
+  }
+});
+
+router.put("/validarLink", async (req, res) => {
+  try {
+    const { correo, password, token } = req.body;
+    const respuesta = await prisma.alumnos.findUnique({
+      where: {
+        correo,
+        password,
+      },
+    });
+    if (respuesta == null) {
+      res.json({
+        message: "Datos incorrectos",
+      });
+    } else {
+      jwt.verify(token, process.env.KEY_LINK, async (err, payload) => {
+        if (err) {
+          res.json({
+            message: "Error en el token",
+          });
+        } else {
+          const { curso } = payload;
+          console.log(curso);
+          const matriculas = await prisma.matriculas.findMany({
+            where: {
+              idAlumno: Number(respuesta.id),
+              idCurso: Number(curso),
+            },
+          });
+
+          console.log(matriculas);
+
+          if (matriculas.length > 0) {
+            return res.json({
+              message: "El alumno ya está matriculado en este curso",
+            });
+          }
+
+          // Matricula al alumno
+          await prisma.matriculas.create({
+            data: {
+              idCurso: Number(curso),
+              idAlumno: Number(respuesta.id),
+            },
+          });
+          res.json({
+            message: "Alumno matriculado con éxito",
+          });
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
       message: "Error en el servidor",
     });
   }

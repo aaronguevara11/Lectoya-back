@@ -7,6 +7,26 @@ const prisma = new PrismaClient({
   log: ["query"],
 });
 
+
+router.get('/verCursos', async (req, res) => {
+  const cursos = await prisma.cursos.findMany({
+    select: {
+      nombre: true,
+      descripcion: true,
+      docente: {
+        select: {
+          nombre: true,
+          apaterno: true
+        }
+      }
+    },
+  })
+  
+  res.json({
+    cursos: cursos
+  })
+})
+
 // Pestaña de Modulos
 // Cursos del docente
 router.get("/cursosDocente", async (req, res) => {
@@ -211,7 +231,7 @@ router.put("/actualizarCurso", async (req, res) => {
       } else {
         const { id, nombre, descripcion } = req.body;
 
-        const curso = await prisma.cursos.findUnique({
+        const curso = await prisma.cursos.findFirst({
           where: {
             id: Number(id),
             idDocente: Number(payload.id),
@@ -257,7 +277,7 @@ router.delete("/eliminarCurso", async (req, res) => {
       } else {
         const { id } = req.body;
 
-        const existeCurso = await prisma.cursos.count({
+        const existeCurso = await prisma.cursos.findFirst({
           where: {
             id: Number(id),
           },

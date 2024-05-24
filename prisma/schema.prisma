@@ -78,7 +78,7 @@ model cambialo {
 model res_interactivas {
   id            Int            @id @default(autoincrement())
   respuesta     String?        @db.VarChar(255)
-  pregunta      String?        @db.VarChar(255) 
+  pregunta      String?        @db.VarChar(255)
   idInteractiva Int
   idAlumno      Int?
   nombre        String?        @db.VarChar(25)
@@ -207,6 +207,6 @@ model temas {
   descripcion String   @db.Text
   nombre      String   @db.VarChar(255)
   lectura     String   @db.Text
-  cursos      cursos?  @relation(fields: [idCurso], references: [id])
+  cursos      cursos?  @relation(fields: [idCurso], references: [id], onDelete: Cascade)
   juegos      juegos[]
 }
