@@ -126,7 +126,7 @@ router.get("/verRespuesta/:id", async (req, res) => {
         });
       } else {
         const id = req.params.id;
-        const juego = await prisma.juegos.findFirst({
+        const juego = await prisma.juegos.findUnique({
           where: {
             id: Number(id),
           },
