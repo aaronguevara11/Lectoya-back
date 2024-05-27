@@ -3,9 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
 const router = Router();
-const prisma = new PrismaClient({
-  log: ["query"],
-});
+const prisma = new PrismaClient();
 
 // Registrar nuevos alumnos
 router.post("/registrarAlumnos", async (req, res) => {
@@ -58,14 +56,7 @@ router.put("/actualizarAlumnos", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const {
-          id,
-          nombre,
-          apaterno,
-          amaterno,
-          correo,
-          numero,
-        } = req.body;
+        const { id, nombre, apaterno, amaterno, correo, numero } = req.body;
 
         const alumno = await prisma.alumnos.findUnique({
           where: { id: Number(id) },
@@ -100,8 +91,6 @@ router.put("/actualizarAlumnos", async (req, res) => {
     });
   }
 });
-
-
 
 //Iniciar sesion
 router.put("/loginAlumnos", async (req, res) => {
@@ -159,7 +148,7 @@ router.put("/alumnoRestablecer", async (req, res) => {
       res.status(404).json({
         message: "Datos no encontrados",
       });
-      return
+      return;
     }
   } catch (error) {
     return res.status(500).json({

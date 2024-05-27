@@ -16,7 +16,8 @@ router.post("/agregarOrdenalo", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const { parrafo1, parrafo2, parrafo3, parrafo4, parrafo5, idTema } = req.body;
+        const { parrafo1, parrafo2, parrafo3, parrafo4, parrafo5, idTema } =
+          req.body;
 
         const temaExiste = await prisma.temas.findUnique({
           where: {
@@ -28,7 +29,7 @@ router.post("/agregarOrdenalo", async (req, res) => {
           res.status(404).json({
             message: "El tema no existe",
           });
-          return  
+          return;
         }
 
         const ordenalo = await prisma.ordenalo.create({

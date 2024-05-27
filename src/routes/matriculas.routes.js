@@ -4,9 +4,7 @@ import jwt from "jsonwebtoken";
 
 
 const router = Router();
-const prisma = new PrismaClient({
-  log: ["query"],
-});
+const prisma = new PrismaClient();
 
 router.post("/matricularAlumno", async (req, res) => {
   try {
