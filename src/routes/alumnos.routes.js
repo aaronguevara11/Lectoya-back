@@ -56,21 +56,12 @@ router.put("/actualizarAlumnos", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const { id, nombre, apaterno, amaterno, correo, numero } = req.body;
+        const { nombre, apaterno, amaterno, correo, numero } = req.body;
 
-        const alumno = await prisma.alumnos.findUnique({
-          where: { id: Number(id) },
-        });
-
-        if (!alumno) {
-          res.status(404).json({
-            message: "El alumno no existe",
-          });
-          return;
-        }
+        const id = Number(payload.id);
 
         await prisma.alumnos.update({
-          where: { id: Number(id) },
+          where: { id: id },
           data: {
             nombre: nombre,
             apaterno: apaterno,
@@ -81,7 +72,7 @@ router.put("/actualizarAlumnos", async (req, res) => {
         });
 
         res.json({
-          message: "Información del Alumno actualizada correctamente.",
+          message: "Alumno actualizado",
         });
       }
     });
