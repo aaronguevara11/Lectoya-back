@@ -110,6 +110,53 @@ router.get("/mostrarTemas/:id", async (req, res) => {
   }
 });
 
+router.get("/mostrarAlumnos/:id", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+      const id = parseInt(req.params.id);
+
+      const tema1 = await prisma.cursos.findUnique({
+        where: {
+          id: Number(id),
+        },
+        select: {
+          temas: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+            },
+          },
+          matriculas: {
+            select: {
+              alumnos: {
+                select: {
+                  nombre: true,
+                  apaterno: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!tema1) {
+        return res.status(404).json({
+          message: "El tema no existe",
+        });
+      }
+      return res.json({
+        message: "Temas registrados: ",
+        Tema: tema1,
+      });
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error en el servidor",
+    });
+  }
+});
+
 router.post("/agregarTemas", async (req, res) => {
   try {
     const token = req.header("Authorization");
