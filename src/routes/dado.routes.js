@@ -32,7 +32,7 @@ router.get("/verNivel/:id", async (req, res) => {
         }
 
         res.json({
-          message: "Historia interactiva",
+          message: "Nivel",
           juego: nivel,
         });
       }
