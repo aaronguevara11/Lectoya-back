@@ -7,6 +7,43 @@ const prisma = new PrismaClient({
   log: ["query"],
 });
 
+router.get("/verNivel/:id", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+      if (err) {
+        res.json({
+          message: "Error en el token",
+        });
+      } else {
+        const id = parseInt(req.params.id);
+
+        const nivel = await prisma.ruleta.findUnique({
+          where: {
+            id: Number(id),
+          },
+        });
+
+        if (!nivel) {
+          res.status(404).json({
+            message: "El nivel no existe o ha sido borrado",
+          });
+          return;
+        }
+
+        res.json({
+          message: "Nivel",
+          juego: nivel,
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error en el servidor",
+    });
+  }
+});
+
 router.post("/agregarRuleta", async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -16,7 +53,14 @@ router.post("/agregarRuleta", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const {pregunta1, pregunta2, pregunta3, pregunta4, pregunta5, idTema} = req.body;
+        const {
+          pregunta1,
+          pregunta2,
+          pregunta3,
+          pregunta4,
+          pregunta5,
+          idTema,
+        } = req.body;
 
         const temaExiste = await prisma.temas.findUnique({
           where: {
@@ -28,7 +72,7 @@ router.post("/agregarRuleta", async (req, res) => {
           res.status(404).json({
             message: "El tema no existe",
           });
-          return
+          return;
         }
 
         const ruleta = await prisma.ruleta.create({
@@ -37,7 +81,7 @@ router.post("/agregarRuleta", async (req, res) => {
             pregunta2: pregunta2,
             pregunta3: pregunta3,
             pregunta4: pregunta4,
-            pregunta5: pregunta5
+            pregunta5: pregunta5,
           },
         });
 
@@ -70,11 +114,11 @@ router.post("/respuestaRuleta", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const {pregunta, respuesta, id} = req.body;
+        const { pregunta, respuesta, id } = req.body;
         const idAlumno = payload.id;
         const nombre = payload.nombre;
         const apellido = payload.apaterno;
-        
+
         const rj = await prisma.juegos.findUnique({
           where: {
             id: Number(id),

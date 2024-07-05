@@ -7,6 +7,43 @@ const prisma = new PrismaClient({
   log: ["query"],
 });
 
+router.get("/verNivel/:id", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+      if (err) {
+        res.json({
+          message: "Error en el token",
+        });
+      } else {
+        const id = parseInt(req.params.id);
+
+        const nivel = await prisma.ordenalo.findUnique({
+          where: {
+            id: Number(id),
+          },
+        });
+
+        if (!nivel) {
+          res.status(404).json({
+            message: "El nivel no existe o ha sido borrado",
+          });
+          return;
+        }
+
+        res.json({
+          message: "Nivel",
+          juego: nivel,
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error en el servidor",
+    });
+  }
+});
+
 router.post("/agregarOrdenalo", async (req, res) => {
   try {
     const token = req.header("Authorization");

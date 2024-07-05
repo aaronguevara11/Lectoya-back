@@ -7,6 +7,43 @@ const prisma = new PrismaClient({
   log: ["query"],
 });
 
+router.get("/verNivel/:id", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+      if (err) {
+        res.json({
+          message: "Error en el token",
+        });
+      } else {
+        const id = parseInt(req.params.id);
+
+        const nivel = await prisma.dale_significado.findUnique({
+          where: {
+            id: Number(id),
+          },
+        });
+
+        if (!nivel) {
+          res.status(404).json({
+            message: "El nivel no existe o ha sido borrado",
+          });
+          return;
+        }
+
+        res.json({
+          message: "Nivel",
+          juego: nivel,
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error en el servidor",
+    });
+  }
+});
+
 router.post("/agregarSignificado", async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -16,7 +53,7 @@ router.post("/agregarSignificado", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const {lectura, idTema} = req.body;
+        const { lectura, idTema } = req.body;
 
         const temaExiste = await prisma.temas.findUnique({
           where: {
@@ -28,12 +65,12 @@ router.post("/agregarSignificado", async (req, res) => {
           res.status(404).json({
             message: "El tema no existe",
           });
-          return
+          return;
         }
 
         const dado = await prisma.dale_significado.create({
           data: {
-            lectura: lectura
+            lectura: lectura,
           },
         });
 
@@ -66,11 +103,19 @@ router.post("/respuestaSignificado", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const {palabra1, palabra2, palabra3, significado1, significado2, significado3, id} = req.body;
+        const {
+          palabra1,
+          palabra2,
+          palabra3,
+          significado1,
+          significado2,
+          significado3,
+          id,
+        } = req.body;
         const idAlumno = payload.id;
         const nombre = payload.nombre;
         const apellido = payload.apaterno;
-        
+
         const rj = await prisma.juegos.findUnique({
           where: {
             id: Number(id),
