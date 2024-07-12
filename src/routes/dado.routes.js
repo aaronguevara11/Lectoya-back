@@ -166,4 +166,40 @@ router.post("/respuestaDado", async (req, res) => {
   }
 });
 
+router.post("/respuestaDado", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+      if (err) {
+        res.json({
+          message: "Error en el token",
+        });
+      } else {
+        const { pregunta, respuesta, id } = req.body;
+        const idAlumno = payload.id;
+        const nombre = payload.nombre;
+        const apellido = payload.apaterno;
+
+        await prisma.respuesta_dado.create({
+          data: {
+            idDado: Number(id),
+            pregunta: pregunta,
+            respuesta: respuesta,
+            idAlumno: Number(idAlumno),
+            nombre: nombre,
+            apaterno: apellido,
+          },
+        });
+        res.json({
+          message: "Respuesta enviada",
+        });
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+});
+
 export default router;

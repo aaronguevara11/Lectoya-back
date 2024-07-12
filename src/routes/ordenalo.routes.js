@@ -161,4 +161,43 @@ router.post("/agregarRespuesta", async (req, res) => {
   }
 });
 
+router.post("/enviarRespuesta", async (req, res) => {
+  try {
+    const token = req.header("Authorization");
+    jwt.verify(token, process.env.JWT_KEY, async (err, payload) => {
+      if (err) {
+        res.json({
+          message: "Error en el token",
+        });
+      } else {
+        const { orden1, orden2, orden3, orden4, orden5, id } = req.body;
+        const idAlumno = payload.id;
+        const nombre = payload.nombre;
+        const apellido = payload.apaterno;
+
+        await prisma.res_ordenalo.create({
+          data: {
+            idOrdenalo: Number(id),
+            orden1: orden1,
+            orden2: orden2,
+            orden3: orden3,
+            orden4: orden4,
+            orden5: orden5,
+            idAlumno: Number(idAlumno),
+            nombre: nombre,
+            apaterno: apellido,
+          },
+        });
+        res.json({
+          message: "Respuesta enviada",
+        });
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error",
+    });
+  }
+});
+
 export default router;
