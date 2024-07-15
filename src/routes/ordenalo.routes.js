@@ -189,7 +189,7 @@ router.post("/enviarRespuesta", async (req, res) => {
 
         await prisma.res_ordenalo.create({
           data: {
-            id: Number(id),
+            idOrdenalo: Number(id),
             orden1: orden1,
             orden2: orden2,
             orden3: orden3,
