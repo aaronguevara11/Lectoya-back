@@ -175,9 +175,21 @@ router.post("/enviarRespuesta", async (req, res) => {
         const nombre = payload.nombre;
         const apellido = payload.apaterno;
 
+        const nivel = await prisma.ordenalo.findUnique({
+          where: {
+            id: Number(id),
+          },
+        });
+
+        if (!nivel) {
+          res.json({
+            message: "El nivel no existe",
+          });
+        }
+
         await prisma.res_ordenalo.create({
           data: {
-            idOrdenalo: Number(id),
+            id: Number(id),
             orden1: orden1,
             orden2: orden2,
             orden3: orden3,
