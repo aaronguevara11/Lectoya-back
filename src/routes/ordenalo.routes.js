@@ -170,27 +170,51 @@ router.post("/enviarRespuesta", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const { orden1, orden2, orden3, orden4, orden5, id } = req.body;
+        const { orden1, orden2, orden3, orden4, orden5, id, idJuego } =
+          req.body;
         const idAlumno = payload.id;
         const nombre = payload.nombre;
         const apellido = payload.apaterno;
 
-        await prisma.res_ordenalo.create({
-          data: {
-            idOrdenalo: Number(id),
-            orden1: orden1,
-            orden2: orden2,
-            orden3: orden3,
-            orden4: orden4,
-            orden5: orden5,
-            idAlumno: Number(idAlumno),
-            nombre: nombre,
-            apaterno: apellido,
+        const rj = await prisma.juegos.findUnique({
+          where: {
+            id: Number(id),
+          },
+          select: {
+            nombreJuego: true,
+            idJuego: true,
           },
         });
-        res.json({
-          message: "Respuesta enviada",
-        });
+
+        if (!rj) {
+          res.status(404).json({
+            message: "El juego no existe o ha sido borrado",
+          });
+          return;
+        }
+
+        if (rj.nombreJuego === "Ordenalo YA") {
+          await prisma.res_ordenalo.create({
+            data: {
+              idOrdenalo: Number(idJuego),
+              orden1: orden1,
+              orden2: orden2,
+              orden3: orden3,
+              orden4: orden4,
+              orden5: orden5,
+              idAlumno: Number(idAlumno),
+              nombre: nombre,
+              apaterno: apellido,
+            },
+          });
+          res.json({
+            message: "Respuesta enviada",
+          });
+        } else {
+          res.status(404).json({
+            message: "No se encontro el juego",
+          });
+        }
       }
     });
   } catch (error) {
