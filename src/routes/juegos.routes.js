@@ -27,11 +27,11 @@ router.get("/buscarJuego/:id", async (req, res) => {
           },
         });
 
-        if(!juego) {
+        if (!juego) {
           res.status(404).json({
-            message: "El juego no existe o ya ha sido borrado"
-          })
-          return
+            message: "El juego no existe o ya ha sido borrado",
+          });
+          return;
         }
 
         if (juego.nombreJuego === "Historias interactivas") {
@@ -68,44 +68,44 @@ router.get("/buscarJuego/:id", async (req, res) => {
         } else if (juego.nombreJuego === "Cambialo YA") {
           const nivel = await prisma.cambialo.findUnique({
             where: {
-              id: Number(juego.idJuego)
-            }
-          })
+              id: Number(juego.idJuego),
+            },
+          });
           res.json({
             message: "Juegos",
-            juego: nivel
-          })
+            juego: nivel,
+          });
         } else if (juego.nombreJuego === "Ordenalo YA") {
           const nivel = await prisma.ordenalo.findUnique({
             where: {
-              id: Number(juego.idJuego)
-            }
-          })
+              id: Number(juego.idJuego),
+            },
+          });
           res.json({
             message: "Juegos",
-            juego: nivel
-          })
+            juego: nivel,
+          });
         } else if (juego.nombreJuego === "Ruleteando") {
           const nivel = await prisma.ruleta.findUnique({
             where: {
-              id: Number(juego.idJuego)
-            }
-          })
+              id: Number(juego.idJuego),
+            },
+          });
           res.json({
-            message: "Juegos", 
-            juego: nivel
-          })
+            message: "Juegos",
+            juego: nivel,
+          });
         } else if (juego.nombreJuego === "Dale un significado") {
           const nivel = await prisma.dale_significado.findUnique({
             where: {
-              id: Number(juego.idJuego)
-            }
-          })
-          
+              id: Number(juego.idJuego),
+            },
+          });
+
           res.json({
             message: "Juegos",
-            juego: nivel
-          })
+            juego: nivel,
+          });
         }
       }
     });
@@ -115,6 +115,8 @@ router.get("/buscarJuego/:id", async (req, res) => {
     });
   }
 });
+
+//
 
 router.get("/verRespuesta/:id", async (req, res) => {
   try {
@@ -136,11 +138,11 @@ router.get("/verRespuesta/:id", async (req, res) => {
           },
         });
 
-        if(!juego) {
+        if (!juego) {
           res.status(404).json({
-            message: "El juego no existe o ya ha sido borrado"
-          })
-          return
+            message: "El juego no existe o ya ha sido borrado",
+          });
+          return;
         }
 
         if (juego.nombreJuego === "Historias interactivas") {
@@ -149,8 +151,8 @@ router.get("/verRespuesta/:id", async (req, res) => {
               id: Number(juego.idJuego),
             },
             include: {
-              resInteractivas: true
-            }
+              resInteractivas: true,
+            },
           });
           res.json({
             message: "Juegos",
@@ -162,8 +164,8 @@ router.get("/verRespuesta/:id", async (req, res) => {
               id: Number(juego.idJuego),
             },
             include: {
-              res_haremos: true
-            }
+              res_haremos: true,
+            },
           });
 
           res.json({
@@ -176,8 +178,8 @@ router.get("/verRespuesta/:id", async (req, res) => {
               id: Number(juego.idJuego),
             },
             include: {
-              respuesta_dado: true
-            }
+              respuesta_dado: true,
+            },
           });
           res.json({
             message: "Juegos",
@@ -186,56 +188,56 @@ router.get("/verRespuesta/:id", async (req, res) => {
         } else if (juego.nombreJuego === "Cambialo YA") {
           const nivel = await prisma.cambialo.findUnique({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
             include: {
-              res_cambialo: true
-            }
-          })
+              res_cambialo: true,
+            },
+          });
           res.json({
             message: "Juegos",
-            juego: nivel
-          })
+            juego: nivel,
+          });
         } else if (juego.nombreJuego === "Ordenalo YA") {
           const nivel = await prisma.ordenalo.findUnique({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
             include: {
-              res_ordenalo: true
-            }
-          })
+              res_ordenalo: true,
+            },
+          });
           res.json({
             message: "Juegos",
-            juego: nivel
-          })
+            juego: nivel,
+          });
         } else if (juego.nombreJuego === "Ruleteando") {
           const nivel = await prisma.ruleta.findUnique({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
             include: {
-              res_ruleta: true
-            }
-          })
+              res_ruleta: true,
+            },
+          });
           res.json({
-            message: "Juegos", 
-            juego: nivel
-          })
+            message: "Juegos",
+            juego: nivel,
+          });
         } else if (juego.nombreJuego === "Dale un significado") {
           const nivel = await prisma.dale_significado.findUnique({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
             include: {
-              res_significado: true
-            }
-          })
-          
+              res_significado: true,
+            },
+          });
+
           res.json({
             message: "Juegos",
-            juego: nivel
-          })
+            juego: nivel,
+          });
         }
       }
     });
@@ -255,7 +257,7 @@ router.delete("/borrarJuegos", async (req, res) => {
           message: "Error en el token",
         });
       } else {
-        const {id} = req.body;
+        const { id } = req.body;
         const juego = await prisma.juegos.findFirst({
           where: {
             id: Number(id),
@@ -266,11 +268,11 @@ router.delete("/borrarJuegos", async (req, res) => {
           },
         });
 
-        if(!juego) {
+        if (!juego) {
           res.status(404).json({
-            message: "El juego no existe o ya ha sido borrado"
-          })
-          return
+            message: "El juego no existe o ya ha sido borrado",
+          });
+          return;
         }
 
         if (juego.nombreJuego === "Historias interactivas") {
@@ -281,10 +283,10 @@ router.delete("/borrarJuegos", async (req, res) => {
           });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
           });
@@ -296,10 +298,10 @@ router.delete("/borrarJuegos", async (req, res) => {
           });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
           });
@@ -311,74 +313,73 @@ router.delete("/borrarJuegos", async (req, res) => {
           });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
           });
         } else if (juego.nombreJuego === "Cambialo YA") {
           const nivel = await prisma.cambialo.delete({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
-          })
+          });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
-          })
+          });
         } else if (juego.nombreJuego === "Ordenalo YA") {
           const nivel = await prisma.ordenalo.delete({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
-          })
+          });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
-          })
+          });
         } else if (juego.nombreJuego === "Ruleteando") {
           const nivel = await prisma.ruleta.delete({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
-          })
+          });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
-          })
+          });
         } else if (juego.nombreJuego === "Dale un significado") {
           const nivel = await prisma.dale_significado.delete({
             where: {
-              id: Number(juego.idJuego)
+              id: Number(juego.idJuego),
             },
-          })
-          
+          });
 
           await prisma.juegos.delete({
-            where:{
-              id: Number(id)
-            }
-          })
+            where: {
+              id: Number(id),
+            },
+          });
           res.json({
             message: "El juego ha sido borrado con exito",
-          })
+          });
         }
       }
     });
