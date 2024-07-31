@@ -7,8 +7,7 @@ const prisma = new PrismaClient({
   log: ["query"],
 });
 
-
-router.get('/verCursos', async (req, res) => {
+router.get("/verCursos", async (req, res) => {
   const cursos = await prisma.cursos.findMany({
     select: {
       nombre: true,
@@ -16,19 +15,17 @@ router.get('/verCursos', async (req, res) => {
       docente: {
         select: {
           nombre: true,
-          apaterno: true
-        }
-      }
+          apaterno: true,
+        },
+      },
     },
-  })
-  
-  res.json({
-    cursos: cursos
-  })
-})
+  });
 
-// Pestaña de Modulos
-// Cursos del docente
+  res.json({
+    cursos: cursos,
+  });
+});
+
 router.get("/cursosDocente", async (req, res) => {
   try {
     const token = req.header("Authorization");
